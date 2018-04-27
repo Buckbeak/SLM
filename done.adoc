@@ -1,0 +1,5 @@
+= Things done
+
+[14th June 2015]
+* Get rid of Network#cluster
+* Get rid of Network#nodeWeight
