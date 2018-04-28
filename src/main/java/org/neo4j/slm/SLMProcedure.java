@@ -93,7 +93,7 @@ public class SLMProcedure
             try ( Transaction tx = db.beginTx() )
             {
                 org.neo4j.graphdb.Node node = db.findNode( Label.label( label ), "id", String.valueOf( entry.getKey() ) );
-                node.addLabel( Label.label( (format( "Community-%d`", entry.getValue().getCluster() )) ) );
+                node.addLabel( Label.label( (format( "Community%d", entry.getValue().getCluster() )) ) );
                 tx.success();
             }
         }
