@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.stream.Stream;
+import java.util.UUID;
 
 import org.neo4j.graphdb.*;
 import org.neo4j.graphdb.Relationship;
@@ -23,9 +24,11 @@ public class SLMProcedure
     @Context
     public org.neo4j.graphdb.GraphDatabaseService db;
 
+    //@Procedure( name = "org.neo4j.slm.subslm")
     @Procedure
     @PerformsWrites
-    public Stream<Cluster> slm( @Name("label") String label, @Name("relationshipType") String relationshipType) throws IOException
+    public Stream<Cluster> slm( @Name("label") String label, @Name("relationshipType") String relationshipType, @Name("constraint") String constraint) throws IOException
+    //public Stream<Cluster> slm( @Name("label") String label, @Name("relationshipType") String relationshipType) throws IOException
     {
 //        try ( Transaction tx = db.beginTx() )
 //        {
@@ -44,11 +47,19 @@ public class SLMProcedure
 //
 //        }
 
+/*
+        String query = "MATCH (s1:" + label + " {Cluster:"+constraint+"})-[r:" + relationshipType + "]->(s2:" + label + " {Cluster:"+constraint+"})\n" +
+                        "RETURN s1.id AS p1, s2.id AS p2, toFloat(1) AS weight";
+*/
+
 
         String query = "MATCH (person1:" + label + ")-[r:" + relationshipType + "]->(person2:" + label + ") \n" +
                        "RETURN person1.id AS p1, person2.id AS p2, toFloat(1) AS weight";
 
+
         Result rows = db.execute( query );
+
+        System.out.println(rows.toString());
 
         ModularityOptimizer.ModularityFunction modularityFunction = ModularityOptimizer.ModularityFunction.Standard;
         Network network = Network.create( modularityFunction, rows );
@@ -93,7 +104,32 @@ public class SLMProcedure
             try ( Transaction tx = db.beginTx() )
             {
                 org.neo4j.graphdb.Node node = db.findNode( Label.label( label ), "id", String.valueOf( entry.getKey() ) );
-                node.addLabel( Label.label( (format( "Community%d", entry.getValue().getCluster() )) ) );
+
+                //Try 1
+                    //node.addLabel( Label.label( (format( "Community%d", entry.getValue().getCluster() )) ) );
+
+                //Try 2
+/*
+                if(labelExists(Object("Community%d")))
+                {
+                    node.addLabel( Label.label( (format( "ClusterCommunity%d", entry.getValue().getCluster() )) ) );
+                }
+                else
+                {
+                    //String uniqueID = UUID.randomUUID().toString();
+                    //node.addLabel( Label.label( (format( uniqueID, entry.getValue().getCluster() )) ) );
+                }
+*/
+
+                //Try 3
+
+                //if(node.getProperty("id"))
+                //{
+                    //node.getProperty();
+                    System.out.println(node.getProperty("id").toString());
+                    node.setProperty("Cluster",entry.getValue().getCluster());
+
+                //}
                 tx.success();
             }
         }
@@ -103,6 +139,25 @@ public class SLMProcedure
                 .stream()
                 .map( ( entry ) -> new Cluster( entry.getKey(), entry.getValue().getCluster() ) );
     }
+
+/*
+    public static boolean labelExists(Object node)
+    {
+        label = DynamicLabel.label(node);
+        Iterable<IndexDefinition> indexes = schema.getIndexes(label);
+        for(IndexDefinition index : indexes) 
+        {
+            for (String key: index.getPropertyKeys()) 
+            {
+                if (key.equals("id")) 
+                {
+                    return true; // index for label and property exists
+                }
+            }
+        }
+        return false; // no matching schema index
+    }
+*/
 
     public static class Cluster
     {
