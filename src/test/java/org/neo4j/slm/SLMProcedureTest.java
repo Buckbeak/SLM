@@ -21,8 +21,8 @@ public class SLMProcedureTest
         db.execute("CREATE (t1:Topic {id: '0'})-[:SIMILAR {score: 0.33}]->(t2:Topic {id: '1'})").close();
 
         // when
-        //Result res = db.execute("CALL org.neo4j.slm.slm('Topic', 'SIMILAR')");
-        Result res = db.execute("CALL org.neo4j.slm.slm('Topic', 'SIMILAR', '1')");
+        Result res = db.execute("CALL org.neo4j.slm.slm('Topic', 'SIMILAR')");
+        //Result res = db.execute("CALL org.neo4j.slm.slm('Topic', 'SIMILAR', '1')");
 
         // then
         assertEquals(0L, res.next().get( "clusterId" ));
@@ -39,8 +39,8 @@ public class SLMProcedureTest
         db.execute("CREATE (t1:Topic {id: '0'})-[:SIMILAR {score: 0.33}]->(t2:Topic {id: '2'})").close();
 
         // when
-        //Result res = db.execute("CALL org.neo4j.slm.slm('Topic', 'SIMILAR')");
-        Result res = db.execute("CALL org.neo4j.slm.slm('Topic', 'SIMILAR', '1')");
+        Result res = db.execute("CALL org.neo4j.slm.slm('Topic', 'SIMILAR')");
+        //Result res = db.execute("CALL org.neo4j.slm.slm('Topic', 'SIMILAR', '1')");
 
         // then
         assertEquals(0L, res.next().get( "clusterId" ));
