@@ -873,7 +873,26 @@ public class ReducedNetwork implements Cloneable, Serializable
                 bestCluster = unusedCluster[numberUnusedClusters - 1];
                 numberUnusedClusters--;
             }
+			
+			try 
+            {
+                System.out.println(clusters.get( bestCluster ));// NUll
+                if(null == clusters.get( bestCluster ))
+				{
+                    return update;
+                }
+            }
+            catch (NullPointerException e) { 
+                System.out.println("NullPointerException Description:"+e);
+                throw e;
+            }
+            catch (Exception e) 
+            {
+                System.out.println("Exception occurred");
+                throw e;
+            }
 
+			
             clusters.get( bestCluster ).addWeight( nodeWeight( nodeId ) );
             numberOfNodesPerCluster[bestCluster]++;
             if ( bestCluster == cluster[nodeId] )
