@@ -27,7 +27,7 @@ public class SLMProcedure
     //@Procedure( name = "org.neo4j.slm.subslm")
     @Procedure
     @PerformsWrites
-    public Stream<Cluster> slm( @Name("label") String label, @Name("relationshipType") String relationshipType) throws IOException
+    public Stream<Cluster> slm( @Name("label") String label, @Name("relationshipType") String relationshipType,@Name("hostname_json") String hostname_json) throws IOException
     {
 //        try ( Transaction tx = db.beginTx() )
 //        {
@@ -46,8 +46,11 @@ public class SLMProcedure
 //
 //        }
 
-        String query = "MATCH (person1:" + label + ")-[r:" + relationshipType + "]->(person2:" + label + ") \n" +
-                       "RETURN person1.id AS p1, person2.id AS p2, toFloat(1) AS weight";
+        String query =  "MATCH (person1:" + label +")-[r:" + relationshipType + "]->(person2:" + label + ") \n" +
+                        "WHERE person1.hostname IN " + hostname_json + " \n" +
+                        "AND \n" +
+                        "person2.hostname IN " + hostname_json + " \n" +
+                        "RETURN person1.id AS p1, person2.id AS p2, toFloat(1) AS weight";
 
         Result rows = db.execute( query );
 
