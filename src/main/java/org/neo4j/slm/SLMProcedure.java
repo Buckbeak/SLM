@@ -46,7 +46,7 @@ public class SLMProcedure
 //
 //        }
 
-        String query =  "MATCH (person1:" + label +")-[r:" + relationshipType + "]->(person2:" + label + ") \n" +
+        String query =  "MATCH (person1:" + label +")-[r:" + relationshipType + "]-(person2:" + label + ") \n" +
                         "WHERE person1.hostname IN " + hostname_json + " \n" +
                         "AND \n" +
                         "person2.hostname IN " + hostname_json + " \n" +
@@ -146,7 +146,7 @@ public class SLMProcedure
     public Stream<Cluster> subSlm( @Name("label") String label, @Name("relationshipType") String relationshipType, @Name("constraint,0") String constraint) throws IOException
     {
 
-        String query = "MATCH (s1:" + label + " {Cluster:"+constraint+"})-[r:" + relationshipType + "]->(s2:" + label + " {Cluster:"+constraint+"})\n" +
+        String query = "MATCH (s1:" + label + " {Cluster:"+constraint+"})-[r:" + relationshipType + "]-(s2:" + label + " {Cluster:"+constraint+"})\n" +
                         "RETURN s1.id AS p1, s2.id AS p2, toFloat(1) AS weight";
 
         Result rows = db.execute( query );
